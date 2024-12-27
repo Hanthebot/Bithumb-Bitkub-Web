@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upbit-Bitkub Price Comparison</title>
+    <link rel="stylesheet" type="text/css" href="./src/css/style.css">
+    <script type="text/javascript" src="./src/js/setup.js"></script>
+    <script type="text/javascript" src="./src/js/util.js"></script>
+    <script type="text/javascript" src="./src/js/crypto.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Upbit-Bitkub Price Comparison</h1>
+
+        <div class="pad"></div>
+
+        <table class="settings_table">
+            <tr>
+                <td><input id="rate_val" type="number" min="0" placeholder="THB rate" value="38.5"></td>
+                <td><input id="fee_val" type="number" min="0" value="0.9974" placeholder="fee"></td>
+                <td><button id="apply_btn">Apply</button></td>
+            </tr>
+            <tr>
+                <td><input id="kim_val" type="number" step="0.01" value="0.00" placeholder="김프"></td>
+                <td><input id="rev_val" type="number" step="0.01" min="0" value="0.00" placeholder="역프"></td>
+                <td><button id="crawl_btn">Crawl</button></td>
+            </tr>
+        </table>
+
+        <div class="pad"></div>
+        
+        <table id="top_data">
+            <tr class="table_border">
+                <th class="sym">SYM</th>
+                <th>Upbit</th>
+                <th>Bitkub</th>
+                <th>Bitkub (KRW)</th>
+                <th>%</th>
+            </tr>
+        </table>
+
+        <div class="pad"></div>
+
+        <table id="main_data">
+            <tr class="table_border">
+                <th class="sym">SYM</th>
+                <th>Upbit</th>
+                <th>Bitkub</th>
+                <th>Bitkub (KRW)</th>
+                <th>%</th>
+            </tr>
+        </table>
+
+        <div class="pad"></div>
+        <p id="textbox">Nothing Yet</p>
+    </div>
+    <script type="text/javascript" src="./src/js/footer.js"></script>
+</body>
+</html>
