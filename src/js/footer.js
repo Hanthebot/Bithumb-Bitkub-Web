@@ -7,6 +7,9 @@ document.getElementById("coin_btn")
 document.getElementById("coin_delete_btn")
 .addEventListener("click", removeCoin);
 
+document.getElementById("execute_toggle_btn")
+.addEventListener("click", toggleExecute);
+
 loadState();
 
 saveUrl();

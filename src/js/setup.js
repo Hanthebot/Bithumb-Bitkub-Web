@@ -19,6 +19,7 @@ var data = {
     best: []
 }
 var available = [];
+var execute_continue = true;
 
 async function getListBk(cur="THB") {
     let avail_list = [];

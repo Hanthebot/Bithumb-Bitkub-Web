@@ -110,9 +110,11 @@ async function crawlAndUpdate() {
 }
 
 function crawlRepeat() {
-    crawlAndUpdate().then(() => {
-        setTimeout(crawlRepeat, 1000);
-    });
+    if (execute_continue) {
+        crawlAndUpdate().then(() => {
+            setTimeout(crawlRepeat, 1000);
+        });
+    }
 }
 
 function addOption(select, sym) {
@@ -158,4 +160,15 @@ function removeCoin() {
     updateWholeTable();
     document.getElementById("current").innerText = `Current coins: ${state.coins.join(', ')}`;
     saveUrl();
+}
+
+function toggleExecute() {
+    if (execute_continue) {
+        execute_continue = false;
+        document.getElementById("execute_toggle_btn").textContent = "Resume";
+    } else {
+        execute_continue = true;
+        document.getElementById("execute_toggle_btn").textContent = "Stop Crawling";
+        crawlRepeat();
+    }
 }

@@ -38,13 +38,20 @@ th {
 .table_border {
     border-bottom: 3px solid darkgray;
 }
+
 .settings_table {
     border: none;
     align-content: center;
 }
 
-.settings_table input {
+.settings_table input, .settings_table select, .settings_table button {
     border: none;
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+}
+
+.settings_table input {
     background-color: transparent;
     color: #fff;
     font-size: 16px;
@@ -53,13 +60,24 @@ th {
     box-sizing: border-box;
 }
 
-.settings_table button {
-    border: none;
+button {
     background-color: #2f6129;
     color: #fff;
     font-size: 16px;
     padding: 8px 16px;
     cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #254d22;
+}
+
+select {
+    background-color: #2f6129;
+    color: #fff;
+    font-size: 16px;
+    padding: 8px;
     width: 100%;
 }
 
@@ -80,13 +98,11 @@ td.best {
     padding-top: 20px;
 }
 
-select {
+.toggle-container {
+    text-align: center;
+}
+
+.toggle-btn {
     border: none;
-    background-color: #2f6129;
-    color: #fff;
-    font-size: 16px;
-    padding: 8px;
-    width: 100%;
-    /* box-sizing: border-box; */
-    /* cursor: pointer; */
+    width: 50%;
 }
