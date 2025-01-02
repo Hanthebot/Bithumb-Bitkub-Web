@@ -1,35 +1,51 @@
-async function crawlUpbit(BTC="BTC", cur="KRW") {
-    return fetch(`https://api.upbit.com/v1/orderbook?markets=${cur}-${BTC}`, {'User-Agent': 'Mozilla 5.0'})
-        .then(response => response.json())
-        .then(data => {
-            return [data[0].orderbook_units[0].bid_price, data[0].orderbook_units[0].ask_price, data[0].orderbook_units[0].bid_size, data[0].orderbook_units[0].ask_size];
-        });
+async function crawlBithumb(BTC="BTC", cur="KRW") {
+    let price = []
+    await $.getJSON(`https://api.bithumb.com/public/orderbook/${BTC}`,
+        (rst) => {
+            price = [rst.data.bids[0].price, rst.data.asks[0].price, rst.data.bids[0].quantity, rst.data.asks[0].quantity];
+        }
+    ).promise();
+    return price;
 } 
 
 async function crawlBitkub(BTC="BTC", cur="THB") {
-    return fetch(`https://api.bitkub.com/api/market/books?sym=${cur}_${BTC}&lmt=1`, {'User-Agent': 'Mozilla 5.0'})
-        .then(response => response.json())
-        .then(data => {
-            return [data.result.bids[0][3], data.result.asks[0][3], data.result.bids[0][4], data.result.asks[0][4]];
-        });
-} 
+    let price = [];
+    await $.getJSON(`https://api.bitkub.com/api/market/books?sym=${cur}_${BTC}&lmt=1`,
+        (rst) => {
+            price = [rst.result.bids[0][3], rst.result.asks[0][3], rst.result.bids[0][4], rst.result.asks[0][4]];
+        }
+    ).promise();
+    return price;
+}
 
-function crawlList(data) {
+function crawlList(coinList) {
     let promises = [];
-    document.cryptoList.forEach((sym) => {
-        const delay = Math.random() * 600 * document.cryptoList.length;
+    let delay = 500;
+    data.count = 0;
+    for (let i = 0; i < coinList.length; i++) {
+        let sym = coinList[i];
         promises.push(
             new Promise((resolve) => {
                 setTimeout(() => {
-                    Promise.all([crawlUpbit(sym).then((price) => {data[sym].upbit = price;}),
-                    crawlBitkub(sym).then((price) => {data[sym].bitkub = price;})]).then(() => {
-                    document.count += 1;
-                    document.getElementById("textbox").innerText = `Last updated at ${document.lastUpdate}. Crawling ${document.count}/${document.cryptoList.length}`;
-                    resolve();
+                    if (data.cryptoData[sym] == undefined) {
+                        data.cryptoData[sym] = {
+                            base: [0, 0, 0, 0],
+                            foreign: [0, 0, 0, 0],
+                            kim: 0,
+                            rev: 0
+                        };
+                    }
+                    Promise.all([
+                        crawlBithumb(sym).then((price) => {data.cryptoData[sym].base = price;}),
+                        crawlBitkub(sym).then((price) => {data.cryptoData[sym].foreign = price;})
+                    ]).then(() => {
+                        data.count += 1;
+                        document.getElementById("textbox").innerText = `Last updated at ${data.lastUpdate}. Crawling ${data.count}/${state.coins.length}`;
+                        resolve();
                     });
-                }, delay);
+                }, (i+1)*delay);
             }
         ));
-    });
+    }
     return promises;
 }

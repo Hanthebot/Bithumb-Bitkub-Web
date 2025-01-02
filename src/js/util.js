@@ -1,22 +1,14 @@
-var intervalId;
 document.cryptoData = {};
 document.lastUpdate = "N/A";
 
-document.template = `
+const TABLE_TEMPLATE = `
             <tr class="table_border">
                 <th class="sym">SYM</th>
-                <th>Upbit</th>
-                <th>Bitkub</th>
-                <th>Bitkub (KRW)</th>
+                <th>${EXCHANGE_BASE}</th>
+                <th>${EXCHANGE_FOREIGN}</th>
+                <th>${EXCHANGE_FOREIGN} (KRW)</th>
                 <th>%</th>
             </tr>`;
-            
-function clear() {
-    if (typeof intervalId !== 'undefined') {
-        window.clearInterval(intervalId);
-        intervalId = undefined;
-    }
-}
 
 function pad(val){
     return (val<10) ? '0' + val : val;
@@ -27,54 +19,54 @@ function toTime(date) {
 }
 
 function recomputePercentage() {
-    document.kim_best = document.cryptoList[0];
-    document.rev_best = document.cryptoList[0];
-    document.cryptoList.forEach((sym) => {
-        let kim = document.cryptoData[sym].upbit[0] / document.cryptoData[sym].bitkub[1] / document.rate * document.fee - 1;
-        document.cryptoData[sym].kim = parseFloat(kim * 100);
-        let rev = document.cryptoData[sym].bitkub[0] / document.cryptoData[sym].upbit[1] * document.rate * document.fee - 1;
-        document.cryptoData[sym].rev  = parseFloat(rev * 100);
+    let kim_best = state.coins[0];
+    let rev_best = state.coins[0];
+    state.coins.forEach((sym) => {
+        let kim = data.cryptoData[sym].base[0] / data.cryptoData[sym].foreign[1] / state.rate * state.fee - 1;
+        data.cryptoData[sym].kim = parseFloat(kim * 100);
+        let rev = data.cryptoData[sym].foreign[0] / data.cryptoData[sym].base[1] * state.rate * state.fee - 1;
+        data.cryptoData[sym].rev  = parseFloat(rev * 100);
         
-        document.cryptoData[sym].kim_class = document.cryptoData[sym].kim >= document.kim ? "green" : "red";
-        document.cryptoData[sym].rev_class = document.cryptoData[sym].rev >= document.rev ? "green" : "red";
+        data.cryptoData[sym].kim_class = data.cryptoData[sym].kim >= state.alert.kim ? "green" : "red";
+        data.cryptoData[sym].rev_class = data.cryptoData[sym].rev >= state.alert.rev ? "green" : "red";
 
-        if (document.cryptoData[sym].kim > document.cryptoData[document.kim_best].kim) document.kim_best = sym;
-        if (document.cryptoData[sym].rev > document.cryptoData[document.rev_best].rev) document.rev_best = sym;
+        if (data.cryptoData[sym].kim > data.cryptoData[kim_best].kim) kim_best = sym;
+        if (data.cryptoData[sym].rev > data.cryptoData[rev_best].rev) rev_best = sym;
     });
-    document.cryptoData[document.kim_best].kim_class += " best";
-    document.cryptoData[document.rev_best].rev_class += " best";
+    data.cryptoData[kim_best].kim_class += " best";
+    data.cryptoData[rev_best].rev_class += " best";
+    data.best = [kim_best, rev_best];
 }
 
 function rowTemplate(sym) {
-    let dat = document.cryptoData[sym];
+    let dat = data.cryptoData[sym];
     return `<tr>
             <td rowspan="2" class="sym">${sym}</td>
-            <td>${dat.upbit[0]}</td>
-            <td>${dat.bitkub[0]}</td>
-            <td>${(dat.bitkub[0] * document.rate).toFixed(2)}</td>
+            <td>${dat.base[0]}</td>
+            <td>${dat.foreign[0]}</td>
+            <td>${(dat.foreign[0] * state.rate).toFixed(2)}</td>
             <td class="${dat.kim_class}">${dat.kim.toFixed(2)}%</td>
         </tr>
         <tr class="table_border">
-            <td>${dat.upbit[1]}</td>
-            <td>${dat.bitkub[1]}</td>
-            <td>${(dat.bitkub[1] * document.rate).toFixed(2)}</td>
+            <td>${dat.base[1]}</td>
+            <td>${dat.foreign[1]}</td>
+            <td>${(dat.foreign[1] * state.rate).toFixed(2)}</td>
             <td class="${dat.rev_class}">${dat.rev.toFixed(2)}%</td>
         </tr>
         `;
 }
 
 function updateTable() {
-    let str = document.template;
-    document.cryptoList.forEach((sym) => {
+    let str = TABLE_TEMPLATE;
+    state.coins.forEach((sym) => {
         str += rowTemplate(sym);
     });
     document.getElementById("main_data").innerHTML = str;
 };
 
 function updateMinMax() {
-    let str = document.template;
-    
-    [document.kim_best, document.rev_best].forEach((sym) => {
+    let str = TABLE_TEMPLATE;
+    data.best.forEach((sym) => {
         str += rowTemplate(sym);
     });
     document.getElementById("top_data").innerHTML = str;
@@ -91,18 +83,63 @@ function applyData() {
     updateWholeTable();
 }
 
-function crawlAndUpdate() {
-    document.count = 0;
-    let promises = crawlList(document.cryptoData, document.cryptoList)
-    Promise.all(promises).then(() => {
+async function crawlAndUpdate() {
+    data.count = 0;
+    let promises = crawlList(state.coins)
+    return Promise.all(promises).then(() => {
         updateWholeTable();
-        document.lastUpdate = toTime(new Date());
-        document.getElementById("textbox").innerText = `Crawled all ${document.cryptoList.length}/${document.cryptoList.length}! Last updated at ${document.lastUpdate}`;
+        data.lastUpdate = toTime(new Date());
+        document.getElementById("textbox").innerText = `Last updated at ${data.lastUpdate}. Crawled all ${state.coins.length}/${state.coins.length}!`;
     });
 }
 
 function crawlRepeat() {
-    clear();
-    crawlAndUpdate();
-    intervalId = window.setInterval(crawlAndUpdate, 30000);
+    crawlAndUpdate().then(() => {
+        setTimeout(crawlRepeat, 1000);
+    });
+}
+
+function addOption(select, sym) {
+    let option = document.createElement("option");
+    option.text = sym;
+    option.value = sym;
+    select.add(option);
+}
+
+function deleteOption(select, sym) {
+    for (let i = 0; i < select.length; i++) {
+        if (select.options[i].value == sym) {
+            select.remove(i);
+            break;
+        }
+    }
+}
+
+function addCoin() {
+    let sym = document.getElementById("coin_select").value;
+    if (state.coins.includes(sym)) return;
+    state.coins.push(sym);
+    deleteOption(document.getElementById("coin_select"), sym);
+    addOption(document.getElementById("coin_delete"), sym);
+    data.cryptoData[sym] = {
+        base: [0, 0, 0, 0],
+        foreign: [0, 0, 0, 0],
+        kim: 0,
+        rev: 0
+    };
+    updateWholeTable();
+    document.getElementById("current").innerText = `Current coins: ${state.coins.join(', ')}`;
+    saveUrl();
+}
+
+function removeCoin() {
+    let sym = document.getElementById("coin_delete").value;
+    if (!state.coins.includes(sym)) return;
+    deleteOption(document.getElementById("coin_delete"), sym);
+    addOption(document.getElementById("coin_select"), sym);
+    state.coins = state.coins.filter((value) => value != sym);
+    delete data.cryptoData[sym];
+    updateWholeTable();
+    document.getElementById("current").innerText = `Current coins: ${state.coins.join(', ')}`;
+    saveUrl();
 }

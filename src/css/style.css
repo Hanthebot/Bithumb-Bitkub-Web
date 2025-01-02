@@ -86,3 +86,14 @@ td.best {
 .pad {
     padding-top: 20px;
 }
+
+select {
+    border: none;
+    background-color: #2f6129;
+    color: #fff;
+    font-size: 16px;
+    padding: 8px;
+    width: 100%;
+    /* box-sizing: border-box; */
+    /* cursor: pointer; */
+}
