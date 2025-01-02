@@ -20,7 +20,7 @@ async function crawlBitkub(BTC="BTC", cur="THB") {
 
 function crawlList(coinList) {
     let promises = [];
-    let delay = 500;
+    let delay = state.delay;
     data.count = 0;
     for (let i = 0; i < coinList.length; i++) {
         let sym = coinList[i];
@@ -28,19 +28,16 @@ function crawlList(coinList) {
             new Promise((resolve) => {
                 setTimeout(() => {
                     if (data.cryptoData[sym] == undefined) {
-                        data.cryptoData[sym] = {
-                            base: [0, 0, 0, 0],
-                            foreign: [0, 0, 0, 0],
-                            kim: 0,
-                            rev: 0
-                        };
+                        data.cryptoData[sym] = structuredClone(PRICE_TEMPLATE);
                     }
                     Promise.all([
-                        crawlBithumb(sym).then((price) => {data.cryptoData[sym].base = price;}),
+                        crawlBithumb(sym).then((price) => {
+                            data.cryptoData[sym].base = price;
+                        }),
                         crawlBitkub(sym).then((price) => {data.cryptoData[sym].foreign = price;})
                     ]).then(() => {
-                        data.count += 1;
-                        document.getElementById("textbox").innerText = `Last updated at ${data.lastUpdate}. Crawling ${data.count}/${state.coins.length}`;
+                        data.count++;
+                        document.getElementById("textbox").innerText = LAST_UPDATED_CRAWLING.format(data.lastUpdate, data.count, coinList.length);
                         resolve();
                     });
                 }, (i+1)*delay);

@@ -100,9 +100,25 @@ td.best {
 
 .toggle-container {
     text-align: center;
+    display: flex;
+    gap: 10px;
 }
 
 .toggle-btn {
     border: none;
     width: 50%;
+}
+
+input[type="range"] {
+    width: 50%;
+    margin: 0;
+}
+
+#delay_input_num {
+    width: 18%;
+    margin-left: 2%;
+}
+
+#delay_label {
+    margin-left: 10px;
 }

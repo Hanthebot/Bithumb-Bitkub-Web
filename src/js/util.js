@@ -1,22 +1,3 @@
-document.cryptoData = {};
-document.lastUpdate = "N/A";
-
-const TABLE_TEMPLATE = `
-            <tr class="table_border">
-                <th>SYM</th>
-                <th>${EXCHANGE_BASE}</th>
-                <th>${EXCHANGE_FOREIGN}</th>
-                <th>${EXCHANGE_FOREIGN} (KRW)</th>
-                <th>%</th>
-            </tr>`;
-
-const TABLE_TOP_TEMPLATE = `
-            <tr class="table_border">
-                <th>Kim</th>
-                <th>Rev</th>
-                <th>Dif</th>
-            </tr>`;
-            
 function pad(val){
     return (val<10) ? '0' + val : val;
 }
@@ -105,12 +86,12 @@ async function crawlAndUpdate() {
     return Promise.all(promises).then(() => {
         updateWholeTable();
         data.lastUpdate = toTime(new Date());
-        document.getElementById("textbox").innerText = `Last updated at ${data.lastUpdate}. Crawled all ${state.coins.length}/${state.coins.length}!`;
+        document.getElementById("textbox").innerText = LAST_UPDATED.format(data.lastUpdate, data.count, state.coins.length);
     });
 }
 
 function crawlRepeat() {
-    if (execute_continue) {
+    if (data.execute_continue) {
         crawlAndUpdate().then(() => {
             setTimeout(crawlRepeat, 1000);
         });
@@ -146,7 +127,7 @@ function addCoin() {
         rev: 0
     };
     updateWholeTable();
-    document.getElementById("current").innerText = `Current coins: ${state.coins.join(', ')}`;
+    document.getElementById("current").innerText = CURRENT_COINS.format(state.coins.join(', '));
     saveUrl();
 }
 
@@ -158,17 +139,30 @@ function removeCoin() {
     state.coins = state.coins.filter((value) => value != sym);
     delete data.cryptoData[sym];
     updateWholeTable();
-    document.getElementById("current").innerText = `Current coins: ${state.coins.join(', ')}`;
+    document.getElementById("current").innerText = CURRENT_COINS.format(state.coins.join(', '));
     saveUrl();
 }
 
 function toggleExecute() {
-    if (execute_continue) {
-        execute_continue = false;
-        document.getElementById("execute_toggle_btn").textContent = "Resume";
+    if (data.execute_continue) {
+        data.execute_continue = false;
+        document.getElementById("execute_toggle_btn").textContent = CRAWL_STOP;
     } else {
-        execute_continue = true;
-        document.getElementById("execute_toggle_btn").textContent = "Stop Crawling";
+        data.execute_continue = true;
+        document.getElementById("execute_toggle_btn").textContent = CRAWL_ON;
+        crawlRepeat();
+    }
+}
+
+function toggleSound() {
+    if (state.sound) {
+        state.sound = false;
+        document.getElementById("sound_toggle_btn").textContent = SOUND_OFF;
+        saveUrl();
+    } else {
+        state.sound = true;
+        document.getElementById("sound_toggle_btn").textContent = SOUND_ON;
+        saveUrl();
         crawlRepeat();
     }
 }
