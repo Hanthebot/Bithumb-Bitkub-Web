@@ -3,13 +3,20 @@ document.lastUpdate = "N/A";
 
 const TABLE_TEMPLATE = `
             <tr class="table_border">
-                <th class="sym">SYM</th>
+                <th>SYM</th>
                 <th>${EXCHANGE_BASE}</th>
                 <th>${EXCHANGE_FOREIGN}</th>
                 <th>${EXCHANGE_FOREIGN} (KRW)</th>
                 <th>%</th>
             </tr>`;
 
+const TABLE_TOP_TEMPLATE = `
+            <tr class="table_border">
+                <th>Kim</th>
+                <th>Rev</th>
+                <th>Dif</th>
+            </tr>`;
+            
 function pad(val){
     return (val<10) ? '0' + val : val;
 }
@@ -35,7 +42,10 @@ function recomputePercentage() {
     });
     data.cryptoData[kim_best].kim_class += " best";
     data.cryptoData[rev_best].rev_class += " best";
-    data.best = [kim_best, rev_best];
+    data.best = {
+        kim: kim_best, 
+        rev: rev_best
+    };
 }
 
 function rowTemplate(sym) {
@@ -65,10 +75,16 @@ function updateTable() {
 };
 
 function updateMinMax() {
-    let str = TABLE_TEMPLATE;
-    data.best.forEach((sym) => {
-        str += rowTemplate(sym);
-    });
+    let str = TABLE_TOP_TEMPLATE;
+    let kim_best_val = data.cryptoData[data.best.kim].kim;
+    let rev_best_val = data.cryptoData[data.best.rev].rev;
+    str += `
+    <tr class="table_border">
+        <td class="${(kim_best_val >= state.alert.kim) ? 'green' : 'red'} best">${(kim_best_val).toFixed(2)}% - ${data.best.kim}</td>
+        <td class="${(rev_best_val >= state.alert.rev) ? 'green' : 'red'} best">${(rev_best_val).toFixed(2)}% - ${data.best.rev}</td>
+        <td class="${(kim_best_val + rev_best_val >= state.alert.dif) ? 'green' : 'red'} best">${(kim_best_val+rev_best_val).toFixed(2)}% - ${data.best.kim}&${data.best.rev}</td>
+    </tr>
+    `;
     document.getElementById("top_data").innerHTML = str;
 };
 
