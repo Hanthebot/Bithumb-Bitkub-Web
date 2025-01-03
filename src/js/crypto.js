@@ -32,10 +32,10 @@ function crawlList(coinList) {
                     }
                     if (!data.execute_continue) resolve();
                     Promise.all([
-                        crawlBithumb(sym).then((price) => {
+                        crawlBase(sym).then((price) => {
                             data.cryptoData[sym].base = price;
                         }),
-                        crawlBitkub(sym).then((price) => {data.cryptoData[sym].foreign = price;})
+                        crawlForeign(sym).then((price) => {data.cryptoData[sym].foreign = price;})
                     ]).then(() => {
                         data.count++;
                         document.getElementById("textbox").innerText = LAST_UPDATED_CRAWLING.format(data.lastUpdate, data.count, coinList.length);

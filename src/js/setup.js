@@ -1,9 +1,7 @@
-const EXCHANGE_BASE = "Bithumb";
-const EXCHANGE_FOREIGN = "Bitkub";
 const CURRENT_COINS = `Current coins: {0}`;
 const DEFAULT = {
     coins: ['BTC', 'ETH', 'XRP'],
-    rate: 42.15,
+    rate: DEFAULT_RATE,
     fee: 0.9974,
     delay: 500,
     delay_total: 1000,
@@ -34,33 +32,9 @@ var data = {
     timeoutCrawls: []
 }
 
-async function getListBk(cur="THB") {
-    let avail_list = [];
-    await $.getJSON("https://api.bitkub.com/api/market/symbols",
-        (resp) => {
-            pairs = resp.result.map(pair => pair.symbol);
-            pairs = pairs.filter(pair => pair.split("_")[0] == cur);
-            avail_list = pairs.map(pair => pair.split("_")[1]);
-        }
-    ).promise();
-    return avail_list;
-}
-
-async function getListBt(cur="KRW") {
-    let avail_list = [];
-    await $.getJSON("https://api.bithumb.com/v1/market/all",
-        (resp) => {
-            pairs = resp.map(pair => pair.market);
-            pairs = pairs.filter(pair => pair.split("-")[0] == cur);
-            avail_list = pairs.map(pair => pair.split("-")[1]);
-        }
-    ).promise();
-    return avail_list;
-}
-
 async function getList() {
-    let foreign_list = await getListBk();
-    let base_list = await getListBt();
+    let foreign_list = await getListForeign();
+    let base_list = await getListBase();
     return foreign_list.filter(value => base_list.includes(value));
 }
 

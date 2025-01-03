@@ -188,3 +188,13 @@ function toggleSound(event) {
         saveUrl();
     }
 }
+
+function setTitle() {
+    document.title = HEADER;
+    document.getElementById("header").innerText = HEADER;
+}
+
+function setTable() {
+    document.getElementById("main_data").innerHTML = TABLE_TEMPLATE;
+    document.getElementById("top_data").innerHTML = TABLE_TOP_TEMPLATE;
+}

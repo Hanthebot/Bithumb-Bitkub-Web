@@ -1,3 +1,4 @@
+const HEADER = `${EXCHANGE_BASE}-${EXCHANGE_FOREIGN} Price Comparison`;
 
 const HEADER_SYMBOL = "SYM";
 const HEADER_KIM = "Kim";
@@ -17,7 +18,7 @@ const TABLE_TEMPLATE = `
                 <th>${HEADER_SYMBOL}</th>
                 <th>${EXCHANGE_BASE}</th>
                 <th>${EXCHANGE_FOREIGN}</th>
-                <th>${EXCHANGE_FOREIGN} (KRW)</th>
+                <th>${EXCHANGE_FOREIGN} (${HOME_CUR})</th>
                 <th>%</th>
             </tr>`;
 

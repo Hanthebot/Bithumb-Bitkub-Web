@@ -63,4 +63,6 @@ getList().then((available) => {
 });
 
 getSettings();
+setTitle();
+setTable();
 crawlRepeat();
