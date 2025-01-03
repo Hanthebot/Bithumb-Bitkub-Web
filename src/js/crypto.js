@@ -26,10 +26,11 @@ function crawlList(coinList) {
         let sym = coinList[i];
         promises.push(
             new Promise((resolve) => {
-                setTimeout(() => {
+                let timeoutCrawl = setTimeout(() => {
                     if (data.cryptoData[sym] == undefined) {
                         data.cryptoData[sym] = structuredClone(PRICE_TEMPLATE);
                     }
+                    if (!data.execute_continue) resolve();
                     Promise.all([
                         crawlBithumb(sym).then((price) => {
                             data.cryptoData[sym].base = price;
@@ -41,6 +42,7 @@ function crawlList(coinList) {
                         resolve();
                     });
                 }, (i+1)*delay);
+                data.timeoutCrawls.push(timeoutCrawl);
             }
         ));
     }

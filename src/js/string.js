@@ -1,4 +1,9 @@
 
+const HEADER_SYMBOL = "SYM";
+const HEADER_KIM = "Kim";
+const HEADER_REV = "Rev";
+const HEADER_DIF = "Dif";
+
 const CRAWL_STOP = "Resume";
 const CRAWL_ON = "Stop Crawling";
 const SOUND_ON = "Sound: ON";
@@ -9,7 +14,7 @@ const LAST_UPDATED_CRAWLING = `Last updated at {0}. Crawling {1}/{2}`;
 
 const TABLE_TEMPLATE = `
             <tr class="table_border">
-                <th>SYM</th>
+                <th>${HEADER_SYMBOL}</th>
                 <th>${EXCHANGE_BASE}</th>
                 <th>${EXCHANGE_FOREIGN}</th>
                 <th>${EXCHANGE_FOREIGN} (KRW)</th>
@@ -18,7 +23,7 @@ const TABLE_TEMPLATE = `
 
 const TABLE_TOP_TEMPLATE = `
             <tr class="table_border">
-                <th>Kim</th>
-                <th>Rev</th>
-                <th>Dif</th>
+                <th>${HEADER_KIM}</th>
+                <th>${HEADER_REV}</th>
+                <th>${HEADER_DIF}</th>
             </tr>`;

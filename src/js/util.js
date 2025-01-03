@@ -69,10 +69,28 @@ function updateMinMax() {
     document.getElementById("top_data").innerHTML = str;
 };
 
+function callAlert() {
+    if (!state.sound) return;
+    let kim = data.cryptoData[data.best.kim].kim;
+    let rev = data.cryptoData[data.best.rev].rev;
+    let dif = kim + rev;
+    if (kim >= state.alert.kim) {
+        let audio = new Audio('./src/sound/kim.wav');
+        audio.play();
+    } else if (rev >= state.alert.rev) {
+        let audio = new Audio('./src/sound/rev.wav');
+        audio.play();
+    } else if (dif >= state.alert.dif) {
+        let audio = new Audio('./src/sound/dif.wav');
+        audio.play();
+    }
+}
+
 function updateWholeTable() {
     recomputePercentage();
     updateTable();
     updateMinMax();
+    callAlert();
 }
 
 function applyData() {
@@ -85,17 +103,18 @@ async function crawlAndUpdate() {
     let promises = crawlList(state.coins)
     return Promise.all(promises).then(() => {
         updateWholeTable();
+        data.timeoutCrawls = [];
         data.lastUpdate = toTime(new Date());
         document.getElementById("textbox").innerText = LAST_UPDATED.format(data.lastUpdate, data.count, state.coins.length);
     });
 }
 
 function crawlRepeat() {
-    if (data.execute_continue) {
-        crawlAndUpdate().then(() => {
-            setTimeout(crawlRepeat, 1000);
-        });
-    }
+    if (!data.execute_continue) return;
+    crawlAndUpdate().then(() => {
+        if (!data.execute_continue) return;
+        data.timeoutId = setTimeout(crawlRepeat, state.delay_total);
+    });
 }
 
 function addOption(select, sym) {
@@ -145,12 +164,16 @@ function removeCoin() {
 
 function toggleExecute() {
     if (data.execute_continue) {
+        clearTimeout(data.timeoutId);
+        data.timeoutId = null;
+        data.timeoutCrawls.forEach((timeout) => clearTimeout(timeout));
+        data.timeoutCrawls = [];
         data.execute_continue = false;
         document.getElementById("execute_toggle_btn").textContent = CRAWL_STOP;
     } else {
         data.execute_continue = true;
         document.getElementById("execute_toggle_btn").textContent = CRAWL_ON;
-        crawlRepeat();
+        if (data.timeoutId === null) crawlRepeat();
     }
 }
 
