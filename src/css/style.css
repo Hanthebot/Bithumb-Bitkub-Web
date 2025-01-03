@@ -114,11 +114,20 @@ input[type="range"] {
     margin: 0;
 }
 
-#delay_input_num {
+.delay_input_num {
     width: 18%;
     margin-left: 2%;
 }
 
-#delay_label {
+.delay_pre_label {
+    width: 13%;
+}
+
+.delay_post_label {
     margin-left: 10px;
+}
+
+.range-container {
+    display: flex;
+    align-items: center;
 }

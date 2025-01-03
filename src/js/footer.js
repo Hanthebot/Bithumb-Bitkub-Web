@@ -26,6 +26,19 @@ delay_input_num.addEventListener("input", (event) => {
     saveUrl();
 });
 
+const delay_total_input = document.getElementById("delay_total_input");
+const delay_total_input_num = document.getElementById("delay_total_input_num");
+delay_total_input.addEventListener("input", (event) => {
+    state.delay_total = event.target.value * 1000;
+    delay_total_input_num.value = event.target.value;
+    saveUrl();
+});
+delay_total_input_num.addEventListener("input", (event) => {
+    state.delay_total = event.target.value * 1000;
+    delay_total_input.value = event.target.value;
+    saveUrl();
+});
+
 loadState();
 
 saveUrl();

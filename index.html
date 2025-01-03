@@ -79,11 +79,22 @@
         
         <div class="pad"></div>
         
-        <label for="delay">Delay</label>
-        <input type="range" id="delay_input" name="delay" min="0" max="3" step="0.001"/>
-        <input type="number" id="delay_input_num" min="0" step="0.001"/>
-        <label for="delay" id="delay_label">s / coin</label>
-
+        <div class="range-container">
+            <label for="delay" class="delay_pre_label">Delay</label>
+            <input type="range" id="delay_input" name="delay" min="0" max="3" step="0.050"/>
+            <input type="number" id="delay_input_num" class="delay_input_num" min="0" step="0.050"/>
+            <label for="delay" class="delay_post_label">s / coin</label>
+        </div>
+        
+        <div class="pad"></div>
+        
+        <div class="range-container">
+            <label for="delay_total" class="delay_pre_label">Delay Total</label>
+            <input type="range" id="delay_total_input" name="delay_total" min="0" max="5" step="0.050"/>
+            <input type="number" id="delay_total_input_num" class="delay_input_num" min="0" step="0.050"/>
+            <label for="delay_total" class="delay_post_label">s</label>
+        </div>
+        
         <div class="pad"></div>
 
         <p id="current">Current coin: </p>

@@ -6,6 +6,7 @@ const DEFAULT = {
     rate: 42.15,
     fee: 0.9974,
     delay: 500,
+    delay_total: 1000,
     sound: false,
     alert: {
         kim: 0.0,
@@ -28,7 +29,9 @@ var data = {
     cryptoData: {},
     best: {},
     execute_continue: true,
-    available: []
+    available: [],
+    timeoutId: null,
+    timeoutCrawls: []
 }
 
 async function getListBk(cur="THB") {
@@ -76,6 +79,8 @@ function loadState() {
     document.getElementById("fee_val").value = state.fee;
     document.getElementById("delay_input").value = state.delay / 1000;
     document.getElementById("delay_input_num").value = state.delay / 1000;
+    document.getElementById("delay_total_input").value = state.delay_total / 1000;
+    document.getElementById("delay_total_input_num").value = state.delay_total / 1000;
     if (state.sound) {
         document.getElementById("sound_toggle_btn").innerText = SOUND_ON;
     } else {
