@@ -162,30 +162,29 @@ function removeCoin() {
     saveUrl();
 }
 
-function toggleExecute() {
+function toggleExecute(event) {
     if (data.execute_continue) {
         clearTimeout(data.timeoutId);
         data.timeoutId = null;
         data.timeoutCrawls.forEach((timeout) => clearTimeout(timeout));
         data.timeoutCrawls = [];
         data.execute_continue = false;
-        document.getElementById("execute_toggle_btn").textContent = CRAWL_STOP;
+        event.target.textContent = CRAWL_STOP;
     } else {
         data.execute_continue = true;
-        document.getElementById("execute_toggle_btn").textContent = CRAWL_ON;
+        event.target.textContent = CRAWL_ON;
         if (data.timeoutId === null) crawlRepeat();
     }
 }
 
-function toggleSound() {
+function toggleSound(event) {
     if (state.sound) {
         state.sound = false;
-        document.getElementById("sound_toggle_btn").textContent = SOUND_OFF;
+        event.target.textContent = SOUND_OFF;
         saveUrl();
     } else {
         state.sound = true;
-        document.getElementById("sound_toggle_btn").textContent = SOUND_ON;
+        event.target.textContent = SOUND_ON;
         saveUrl();
-        crawlRepeat();
     }
 }
