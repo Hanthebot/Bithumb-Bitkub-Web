@@ -2,4 +2,7 @@ index_online.html
 index_weirdo.html
 function.js
 package.json
+package-lock.json
 *.zip
+*.wav
+node_modules/
