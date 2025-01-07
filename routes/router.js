@@ -8,17 +8,21 @@ const ABBR = {
     "Bi": "Binance",
     "Bg": "Bitget",
     "Ok": "Okx",
-    "Gt": "Gate"
+    "Gt": "Gate",
+    "By": "Bybit",
+    "Ku": "Kucoin"
 }
 
 const EXCHANGE_DATA = {
-    "Bithumb": { abbr: "Bt", cur: "KRW" },
-    "Upbit": { abbr: "Up", cur: "KRW" },
-    "Bitkub": { abbr: "Bk", cur: "THB" },
-    "Binance": { abbr: "Bi", cur: "USDT" },
-    "Bitget": { abbr: "Bg", cur: "USDT" },
-    "Okx": { abbr: "Ok", cur: "USDT" },
-    "Gate": { abbr: "Gt", cur: "USDT" }
+    "Bithumb": { abbr: "Bt", cur: "KRW", supported: true },
+    "Upbit": { abbr: "Up", cur: "KRW", supported: false },
+    "Bitkub": { abbr: "Bk", cur: "THB", supported: true },
+    "Binance": { abbr: "Bi", cur: "USDT", supported: true },
+    "Bitget": { abbr: "Bg", cur: "USDT", supported: true },
+    "Okx": { abbr: "Ok", cur: "USDT", supported: true },
+    "Gate": { abbr: "Gt", cur: "USDT", supported: false },
+    "Bybit": { abbr: "By", cur: "USDT", supported: true },
+    "Kucoin": { abbr: "Ku", cur: "USDT", supported: false }
 }
 
 const CUR_RATE = {
@@ -77,7 +81,17 @@ exports.app = asyncHandler(async (req, res, next) => {
     if (!fs.existsSync(filePath)) {
         let [base, foreign] = validateAbbr(req.params.appId);
         if (base == null) {
-            res.status(404).send("Not found");
+            res.status(418).send("Exchange not found");
+            return;
+        }
+        if (!EXCHANGE_DATA[base].supported || !EXCHANGE_DATA[foreign].supported) {
+            if (!EXCHANGE_DATA[base].supported && !EXCHANGE_DATA[foreign].supported) {
+                res.status(418).send(`${base} and ${foreign} not supported`);
+            } else if (!EXCHANGE_DATA[base].supported) {
+                res.status(418).send(`${base} not supported`);
+            } else {
+                res.status(418).send(`${foreign} not supported`);
+            }
             return;
         }
         let def_rate = (CUR_RATE[EXCHANGE_DATA[foreign].cur] / CUR_RATE[EXCHANGE_DATA[base].cur]).toFixed(2);

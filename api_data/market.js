@@ -67,3 +67,23 @@ async function crawlGate(BTC="BTC", cur="USDT") {
     ).promise();
     return price;
 }
+
+async function crawlBybit(BTC="BTC", cur="USDT") {
+    let price = [];
+    await $.getJSON(`https://api.bybit.com/v5/market/orderbook?category=spot&symbol=${BTC}${cur}`,
+        (rst) => {
+            price = [rst.result.b[0][0], rst.result.a[0][0], rst.result.b[0][1], rst.result.a[0][1]];
+        }
+    ).promise();
+    return price;
+}
+
+async function crawlKucoin(BTC="BTC", cur="USDT") {
+    let price = [];
+    await $.getJSON(`https://api.kucoin.com/api/v1/market/orderbook/level2_20?symbol=${BTC}-${cur}`,
+        (rst) => {
+            price = [rst.data.bids[0][0], rst.data.asks[0][0], rst.data.bids[0][1], rst.data.asks[0][1]];
+        }
+    ).promise();
+    return price;
+}

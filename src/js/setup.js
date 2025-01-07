@@ -68,9 +68,10 @@ function loadState() {
 
 function getSettings() {
     state.rate = parseFloat(document.getElementById("rate_val").value);
-    state.fee = parseFloat(document.getElementById("fee_val").value);
-    state.kim = parseFloat(document.getElementById("kim_val").value);
-    state.rev = parseFloat(document.getElementById("rev_val").value);
+    state.alert.fee = parseFloat(document.getElementById("fee_val").value);
+    state.alert.kim = parseFloat(document.getElementById("kim_val").value);
+    state.alert.rev = parseFloat(document.getElementById("rev_val").value);
+    state.alert.dif = parseFloat(document.getElementById("dif_val").value);
 }
 
 function saveUrl() {

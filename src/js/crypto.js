@@ -32,10 +32,8 @@ function crawlList(coinList) {
                     }
                     if (!data.execute_continue) resolve();
                     Promise.all([
-                        crawlBase(sym).then((price) => {
-                            data.cryptoData[sym].base = price;
-                        }),
-                        crawlForeign(sym).then((price) => {data.cryptoData[sym].foreign = price;})
+                        crawlBase(sym).then((price) => {data.cryptoData[sym].base = price;}).catch((error) => { console.error(`Error in crawlBase for ${sym}:`, error); }),
+                        crawlForeign(sym).then((price) => {data.cryptoData[sym].foreign = price;}).catch((error) => { console.error(`Error in crawlBase for ${sym}:`, error); })
                     ]).then(() => {
                         data.count++;
                         document.getElementById("textbox").innerText = LAST_UPDATED_CRAWLING.format(data.lastUpdate, data.count, coinList.length);
